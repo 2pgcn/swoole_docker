@@ -1,0 +1,47 @@
+FROM php:7.3
+
+# Version
+ENV PHPREDIS_VERSION 4.3.0
+ENV SWOOLE_VERSION 4.4.0-beta
+ENV EASYSWOOLE_VERSION 3.x-dev
+
+# Timezone
+RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo 'Asia/Shanghai' > /etc/timezone
+
+# Libs
+RUN apt-get update \
+    && apt-get install -y \
+    curl \
+    wget \
+    git \
+    zip \
+    libz-dev \
+    libssl-dev \
+    libnghttp2-dev \
+    libpcre3-dev \
+    && apt-get clean \
+    && apt-get autoremove
+
+# Composer
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer \
+    && composer self-update --clean-backups
+
+# PDO extension
+RUN docker-php-ext-install pdo_mysql
+
+# Bcmath extension
+RUN docker-php-ext-install bcmath
+
+# Redis extension
+RUN wget http://pecl.php.net/get/redis-${PHPREDIS_VERSION}.tgz -O /tmp/redis.tar.tgz \
+    && pecl install /tmp/redis.tar.tgz \
+    && rm -rf /tmp/redis.tar.tgz \
+    && docker-php-ext-enable redis
+
+
+WORKDIR /var/www/code
+
+
+ENTRYPOINT ["php", "/var/www/code/think", "run"]
