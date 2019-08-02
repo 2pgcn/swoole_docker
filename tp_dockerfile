@@ -41,6 +41,7 @@ RUN wget http://pecl.php.net/get/redis-${PHPREDIS_VERSION}.tgz -O /tmp/redis.tar
     && docker-php-ext-enable redis
 
 
+
 WORKDIR /var/www/code
 
 
