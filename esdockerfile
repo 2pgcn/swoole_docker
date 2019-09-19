@@ -21,7 +21,7 @@ RUN apt-get update \
     libnghttp2-dev \
     libpcre3-dev \
     && apt-get clean \
-    && apt-get autoremove
+    && apt-get autoremove --assume-yes
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php \
